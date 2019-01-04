@@ -177,3 +177,5 @@
 
 ### 참고
 [중첩 클래스(Nested Class) [자바 4대 중첩 클래스]](http://gyrfalcon.tistory.com/entry/JAVAJ-Nested-Class)
+[[자바 입문]내부클래스](https://programmers.co.kr/learn/courses/5/lessons/242#)
+[[자바 입문]익명클래스](https://programmers.co.kr/learn/courses/5/lessons/243#)
