@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Context path="/">
+    <Resource name="jdbc/studydb" auth="Container" type="javax.sql.DataSource" maxActive="10" maxIdle="3" maxWait="10000" username="study" password="1111" driverClassName="com.mysql.cj.jdbc.Driver" url="jdbc:mysql://127.0.0.1/studydb?useSSL=false&amp;allowPublicKeyRetrieval=true" closeMethod="close"/>
+</Context>

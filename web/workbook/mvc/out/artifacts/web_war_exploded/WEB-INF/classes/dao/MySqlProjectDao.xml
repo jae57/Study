@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org/dtd/mybatis-3-mapper.dtd"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        <mapper namespace="dao.ProjectDao">
+            <resultMap type="project" id="projectResultMap">
+                <id column="PNO" property="no"/> <!--property에 해당하는 부분이 settor 메서드에서 쓰일 이름!-->
+                <result column="PNAME" property="title"/>
+                <result column="CONTENT" property="content"/>
+                <result column="STA_DATE" property="startDate" javaType="java.sql.Date"/>
+                <result column="END_DATE" property="endDate" javaType="java.sql.Date"/>
+                <result column="STATE" property="state"/>
+                <result column="CRE_DATE" property="createdDate" javaType="java.sql.Date"/>
+                <result column="TAGS" property="tags"/>
+            </resultMap>
+
+            <!--resultType을 따로 정하지 않고 resultMap을 통해서 resultMap에 보면 type으로 project가 지정되어 있음.-->
+            <!-- 즉, project 객체로 결과값을 리턴하겠다는 뜻!-->
+            <select id="selectList" parameterType="map" resultMap="projectResultMap">
+                select PNO, PNAME, STA_DATE, END_DATE, STATE
+                from PROJECTS
+                order by
+                <choose>
+                    <when test="orderCond == 'TITLE_ASC'">PNAME asc</when>
+                    <when test="orderCond == 'TITLE_DESC'">PNAME desc</when>
+                    <when test="orderCond == 'STARTDATE_ASC'">STA_DATE asc</when>
+                    <when test="orderCond == 'STARTDATE_DESC'">STA_DATE desc</when>
+                    <when test="orderCond == 'ENDDATE_ASC'">END_DATE asc</when>
+                    <when test="orderCond == 'ENDDATE_DESC'">END_DATE desc</when>
+                    <when test="orderCond == 'STATE_ASC'">STATE asc</when>
+                    <when test="orderCond == 'STATE_DESC'">STATE desc</when>
+                    <when test="orderCond == 'PNO_ASC'">PNO asc</when>
+                    <otherwise>PNO desc</otherwise>
+                </choose>
+            </select>
+
+            <!-- #{title} 과 같은 곳에 parameterType으로 주어진 객체로부터 get메서드를 호출해서 넣는다.-->
+            <insert id="insert" parameterType="project">
+                insert into PROJECTS(PNAME, STA_DATE, END_DATE, STATE, CRE_DATE, TAGS)
+                VALUES (#{title},#{content},#{startDate},#{endDate},0,now(),#{tags})
+            </insert>
+
+            <select id="selectOne" parameterType="int" resultMap="projectResultMap">
+                select PNO, PNAME, CONTENT, STA_DATE, END_DATE, STATE, CRE_DATE, TAGS
+                FROM PROJECTS
+                WHERE PNO=#{value} <!--parameterType 객체가 랩퍼객체인 경우 이므로 #{} dl dksdp emfdjrksms -->
+            </select>
+
+            <update id="update" parameterType="map">
+                UPDATE PROJECTS
+                <set>
+                    <if test="title!=null">PNAME=#{title},</if>
+                    <if test="content!=null">CONTENT=#{content},</if>
+                    <if test="startDate!=null">STA_DATE=#{startDate},</if>
+                    <if test="endDate!=null">END_DATE=#{endDate},</if>
+                    <if test="state!=null">STATE=#{state},</if>
+                    <if test="tags!=null">TAGS=#{tags}</if>
+                </set>
+                WHERE PNO=#{no}
+            </update>
+
+            <delete id="delete" parameterType="int">
+                DELETE FROM PRJECTS WHERE PNO=#{value}
+            </delete>
+        </mapper>
