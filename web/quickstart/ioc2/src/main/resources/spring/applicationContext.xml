@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.3.xsd
+                            http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.3.xsd
+                            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.3.xsd">
+
+    <context:component-scan base-package="biz"></context:component-scan>
+    <aop:aspectj-autoproxy></aop:aspectj-autoproxy>
+
+    <!--DataSource설정-->
+    <context:property-placeholder location="classpath:config/database.properties"/>
+    <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driver}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+
+    <!--Spring JDBC 설정-->
+    <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <!--Transaction 설정-->
+    <bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"></property>
+    </bean>
+
+    <tx:advice id="txAdvice" transaction-manager="txManager">
+        <tx:attributes>
+            <tx:method name="get*" read-only="true"/>
+            <tx:method name="*"/>
+        </tx:attributes>
+    </tx:advice>
+
+    <aop:config>
+        <aop:pointcut id="txPointcut" expression="execution(* biz..*(..))"/>
+
+        <aop:advisor pointcut-ref="txPointcut" advice-ref="txAdvice"/>
+    </aop:config>
+    <!--<bean id="log" class="biz.common.Log4jAdvice"></bean>
+    <bean id="around" class="biz.common.AroundAdvice"/>
+    <bean id="before" class="biz.common.BeforeAdvice"/>
+    <bean id="afterReturning" class="biz.common.AfterReturningAdvice"/>
+    <bean id="afterThrowing" class="biz.common.AfterThrowingAdvice"/>
+    <bean id="after" class="biz.common.AfterAdvice"/>-->
+
+    <!--<aop:config>
+        <aop:pointcut id="allPointcut" expression="execution(* biz..*Impl.*(..))"/>
+        <aop:pointcut id="getPointcut" expression="execution(* biz..*Impl.get*(..))"/>
+        <aop:aspect ref="around">
+            <aop:around pointcut-ref="allPointcut" method="aroundLog"/>
+        </aop:aspect>
+        <aop:aspect ref="log">
+            <aop:after pointcut-ref="getPointcut" method="printLogging"/>
+        </aop:aspect>
+        <aop:aspect ref="after">
+            <aop:after pointcut-ref="allPointcut" method="finallyLog"/>
+        </aop:aspect>
+        <aop:aspect ref="afterThrowing">
+            <aop:after-throwing pointcut-ref="allPointcut" method="exceptionLog" throwing="exceptObj"/>
+        </aop:aspect>
+        <aop:aspect ref="before">
+            <aop:before pointcut-ref="allPointcut" method="beforeLog"/>
+        </aop:aspect>
+
+        <aop:aspect ref="afterReturning">
+            <aop:after-returning pointcut-ref="getPointcut" method="afterLog" returning="returnObj"/>
+        </aop:aspect>
+    </aop:config>-->
+    <!--<bean id="userService" class="biz.user.Impl.UserServiceImpl">
+        <property name="userDAO" ref="userDAO"></property>
+    </bean>
+
+    <bean id="userDAO" class="biz.user.Impl.UserDAO"/>-->
+    <!--<bean id="tv" class="polymorphism.SamsungTV" p:speaker-ref="sony" p:price="2700000">
+    </bean>-->
+
+<!--    <bean id="sony" class="polymorphism.SonySpeaker"></bean>-->
+    <!--<bean class="polymorphism.AppleSpeaker"></bean>
+
+    <bean id="collectionBean" class="polymorphism.CollectionBean">
+        <property name="addressList">
+            <list>
+                <value>서울시 강남구 역삼동</value>
+                <value>서울시 성동구 행당동</value>
+            </list>
+        </property>
+    </bean>-->
+</beans>
