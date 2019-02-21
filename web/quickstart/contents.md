@@ -5,5 +5,5 @@
 
 기초 참고 자료 : 스프링 퀵 스타트
 <img width="10" height="10">
-![Spring Quick Start](./book.PNG)
+![Spring Quick Start](./BOOK.PNG)
 </img>
